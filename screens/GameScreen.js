@@ -13,17 +13,18 @@ function generateRandomBetween(min, max, exclude) {
 
   if (rndNum === exclude) {
     return generateRandomBetween(min, max, exclude);
-  } else {
-    return rndNum;
   }
+
+  return rndNum;
 }
 
 let minBoundary = 1;
 let maxBoundary = 100;
 
 function GameScreen({ userNumber, onGameOver }) {
-  const initialGuess = generateRandomBetween(1, 100, userNumber);
-  const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [currentGuess, setCurrentGuess] = useState(() =>
+    generateRandomBetween(1, 100, userNumber),
+  );
 
   useEffect(() => {
     if (currentGuess === userNumber) {
@@ -31,8 +32,14 @@ function GameScreen({ userNumber, onGameOver }) {
     }
   }, [currentGuess, userNumber, onGameOver]);
 
+  useEffect(() => {
+    return () => {
+      minBoundary = 1;
+      maxBoundary = 100;
+    };
+  }, []);
+
   function nextGuessHandler(direction) {
-    // direction => 'lower', 'greater'
     if (
       (direction === 'lower' && currentGuess < userNumber) ||
       (direction === 'greater' && currentGuess > userNumber)
@@ -40,6 +47,7 @@ function GameScreen({ userNumber, onGameOver }) {
       Alert.alert("Don't lie", 'You know that this is wrong...', [
         { text: 'Sorry!', style: 'cancel' },
       ]);
+
       return;
     }
 
@@ -54,31 +62,35 @@ function GameScreen({ userNumber, onGameOver }) {
       maxBoundary,
       currentGuess,
     );
+
     setCurrentGuess(newRndNumber);
   }
 
   return (
     <View style={styles.screen}>
       <Title>Opponent&apos;s Guess</Title>
+
       <NumberContainer>{currentGuess}</NumberContainer>
+
       <Card>
         <InstructionText style={styles.instructionText}>
           Higher or lower?
         </InstructionText>
+
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={nextGuessHandler.bind('lower')}>
+            <PrimaryButton onPress={() => nextGuessHandler('lower')}>
               <Ionicons name="remove" size={24} color="white" />
             </PrimaryButton>
           </View>
+
           <View style={styles.buttonContainer}>
-            <PrimaryButton onPress={nextGuessHandler.bind('greater')}>
+            <PrimaryButton onPress={() => nextGuessHandler('greater')}>
               <Ionicons name="add" size={24} color="white" />
             </PrimaryButton>
           </View>
         </View>
       </Card>
-      {/* <View>LOG ROUND</View> */}
     </View>
   );
 }
