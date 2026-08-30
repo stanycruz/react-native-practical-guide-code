@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 import NumberContainer from '../components/game/NumberContainer';
@@ -25,6 +25,7 @@ function GameScreen({ userNumber, onGameOver }) {
   const [currentGuess, setCurrentGuess] = useState(() =>
     generateRandomBetween(1, 100, userNumber),
   );
+  const [guessRounds, setGuessRounds] = useState(() => [currentGuess]);
 
   useEffect(() => {
     if (currentGuess === userNumber) {
@@ -64,6 +65,7 @@ function GameScreen({ userNumber, onGameOver }) {
     );
 
     setCurrentGuess(newRndNumber);
+    setGuessRounds((prevGuessRounds) => [newRndNumber, ...prevGuessRounds]);
   }
 
   return (
@@ -91,6 +93,11 @@ function GameScreen({ userNumber, onGameOver }) {
           </View>
         </View>
       </Card>
+      <View>
+        {guessRounds.map((guessRound) => (
+          <Text key={guessRound}>{guessRound}</Text>
+        ))}
+      </View>
     </View>
   );
 }
