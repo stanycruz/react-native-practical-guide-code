@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, FlatList, Text } from 'react-native';
+import { View, StyleSheet, Alert, FlatList } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 import NumberContainer from '../components/game/NumberContainer';
@@ -30,9 +30,9 @@ function GameScreen({ userNumber, onGameOver }) {
 
   useEffect(() => {
     if (currentGuess === userNumber) {
-      onGameOver();
+      onGameOver(guessRounds.length);
     }
-  }, [currentGuess, userNumber, onGameOver]);
+  }, [currentGuess, userNumber, onGameOver, guessRounds]);
 
   useEffect(() => {
     return () => {
@@ -96,7 +96,7 @@ function GameScreen({ userNumber, onGameOver }) {
           </View>
         </View>
       </Card>
-      <View>
+      <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}
           renderItem={(itemData) => (
@@ -127,5 +127,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
+  },
+  listContainer: {
+    flex: 1,
+    padding: 16,
   },
 });
